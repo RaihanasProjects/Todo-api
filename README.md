@@ -26,18 +26,34 @@ This project was built step by step as part of a CRUD API assignment. It uses an
 
 1. Clone the repository:
 
-https://github.com/RaihanasProjects/Todo-api.git
+```bash
+git clone https://github.com/RaihanasProjects/Todo-api.git
 cd todo-api
-Create and activate a virtual environment:
+```
+
+2. Create a virtual environment:
+
+```bash
 python -m venv venv
+```
 
-On Windows:
+3. Activate the virtual environment on Windows:
 
+```bash
 venv\Scripts\activate
-Install the required packages:
+```
+
+4. Install the required packages:
+
+```bash
 pip install fastapi uvicorn
-Start the server:
+```
+
+5. Start the server:
+
+```bash
 uvicorn main:app --reload
+```
 
 The API will be available at:
 
@@ -49,9 +65,8 @@ http://localhost:8000/docs
 
 ## API Endpoints
 
-
 GET, `/`, Get information about the API, 200
-GET, `/health`, Check if the API is running, 200 
+GET, `/health`, Check if the API is running, 200
 GET, `/tasks`,  Get all tasks, 200
 GET, `/tasks/{task_id}`, Get a single task by ID, 200
 POST, `/tasks`, Create a new task, 201
@@ -64,8 +79,11 @@ The following example retrieves a single task:
 
 ```bash
 curl -i http://localhost:8000/tasks/1
+```
 
-response
+Example response:
+
+```text
 HTTP/1.1 200 OK
 date: Mon, 24 Aug 2026 06:41:50 GMT
 server: uvicorn
@@ -73,7 +91,7 @@ content-length: 51
 content-type: application/json
 
 {"id":1,"title":"Complete assignment","done":false}
-(venv) C:\Users\gg\Documents\VS code projects\CRUD API\todo-api>
+```
 
 ## Swagger UI
 
@@ -88,5 +106,3 @@ The Swagger UI allows users to view and test all API endpoints directly from the
 ### Swagger Screenshot
 
 ![Swagger UI](swagger.png)
-
-
