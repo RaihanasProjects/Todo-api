@@ -138,31 +138,64 @@ def update_task(task_id: int, task: TaskUpdate):
             status_code=400,
             detail="At least one field is required"
             )
-        
-    for existing_task in tasks:
-        if existing_task["id"] == task_id:
-            if task.title is not None:
-                existing_task["title"]=task.title
 
-            if task.done is not None:
-                existing_task["done"]=task.done 
+    if task.title is not None and task.done is not None:
+        cursor.execute(
+            "UPDATE tasks SET title =?, done = ? WHERE id = ?",
+            (task.title, task.done, task_id)
+        )
 
-            return existing_task
+    elif task.title is not None:
+        cursor.execute(
+            "UPDATE tasks SET title =? WHERE id =? ",
+            (task.title, task_id)
+        )
 
-    raise HTTPException(
-        status_code=404,
-        detail=f"Task {task_id} not found"
+    elif task.done is not None:
+        cursor.execute(
+            "UPDATE tasks SET done = ? WHERE id = ?",
+            (task.done, task_id)
+        )
+
+    if cursor.rowcount ==0:
+        raise HTTPException(
+            status_code=404,
+            detail=f"task {task_id} not found"
+        )
+
+    connection.commit()
+
+    cursor.execute(
+        "SELECT * FROM tasks WHERE id = ?",
+        (task_id,)
     )
+    row = cursor.fetchone()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"task {task_id} not found"
+        )
+
+    return {
+        "id": row[0],
+        "title": row[1],
+        "done": bool(row[2])
+    }
 
 @app.delete("/tasks/{task_id}", status_code=204, description="Delete a task ")
 def delete_task(task_id: int):
-    for index, task in enumerate(tasks):
-        if task["id"] == task_id:
-            tasks.pop(index)
-            return
-
-    raise HTTPException(
-        status_code=404,
-        detail=f"Task {task_id} not found"
+    cursor.execute(
+        "DELETE FROM tasks WHERE id = ?",
+        (task_id,)
     )
+
+    if cursor.rowcount==0:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Task {task_id} not found"
+        )
+
+    connection.commit()
+    return
 
