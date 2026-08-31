@@ -13,7 +13,7 @@ class TaskUpdate(BaseModel):
     title: str | None = None
     done: bool | None = None 
 
-connection = sqlite3.connect("tasks.db")
+connection = sqlite3.connect("tasks.db", check_same_thread=False)
 
 cursor = connection.cursor()
 cursor.execute("""
@@ -82,19 +82,32 @@ def health_check():
     return {
         "status": "ok"
     }
+
 @app.get("/tasks")
 def get_tasks():
-    return tasks
+    cursor.execute("SELECT * FROM tasks")
+    rows = cursor.fetchall()
+    return [
+        { "id": row[0], "title": row[1], "done": bool(row[2])}
+        for row in rows
+    ]
+
 
 @app.get("/tasks/{task_id}",description="Get the specified task by its ID")
 def get_task(task_id: int):
-    for task in tasks:
-        if task["id"] == task_id:
-            return task
-    return JSONResponse(
-        status_code=404,
-        content={"error": f"Task {task_id} not found"}
-    )
+    cursor.execute("SELECT * FROM tasks WHERE id=?", (task_id,))
+    row=cursor.fetchone()
+
+    if row is None:
+        return JSONResponse(
+            status_code=404,
+            content={"error": f"Task {task_id} not found"}
+        )
+    return {
+        "id": row[0],
+        "title": row[1],
+        "done": bool(row[2])
+    }
 
 @app.post("/tasks", status_code=201, description="Create a new task")
 def create_task(task: TaskCreate):
