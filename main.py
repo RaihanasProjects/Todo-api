@@ -41,7 +41,7 @@ if task_count == 0:
 
     cursor.execute(""" 
             INSERT INTO tasks( id, title, done)
-            VALUES (3, 'drink water',0)
+            VALUES (3, 'drink water',1)
             """)
 
     connection.commit()
@@ -117,16 +117,16 @@ def create_task(task: TaskCreate):
             status_code=400,
             detail="Title is required and cannot be empty"
         )
+    cursor.execute("INSERT INTO tasks (title, done) VALUES (?,?)", (task.title, False))
+    connection.commit()
 
-    new_id = max(t["id"] for t in tasks) + 1
+    new_id = cursor.lastrowid
 
     new_task = {
         "id": new_id,
         "title": task.title,
         "done": False
     }
-
-    tasks.append(new_task)
 
     return new_task
 
