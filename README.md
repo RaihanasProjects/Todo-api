@@ -106,3 +106,43 @@ The Swagger UI allows users to view and test all API endpoints directly from the
 ### Swagger Screenshot
 
 ![Swagger UI](swagger.png)
+
+## Database
+
+This project uses SQLite because it is lightweight, simple to set up, and does not require a separate database server.
+
+The database is stored in the project folder as:
+
+`tasks.db`
+
+The database and `tasks` table are automatically created when the FastAPI application starts.
+
+### How to Start
+
+1. Create and activate the virtual environment:
+
+```bash
+py -m venv venv
+venv\Scripts\activate
+
+3.start the server:
+
+```bash
+uvicorn  main:app --reload
+
+The API will be available at:
+
+http://127.0.0.1:8000
+
+## Example SQL Query
+One SQL query I executed using DB Browser for SQLite was:
+
+SELECT * FROM tasks WHERE done = 1;
+
+This query returns all completed tasks.
+
+### Database Screenshot
+
+The database was viewed and tested using **DB Browser for SQLite**.
+
+![SQLite Database](Database-ss.png)
